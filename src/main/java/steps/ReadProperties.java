@@ -21,6 +21,14 @@ public class ReadProperties {
     }
 
     public static String password() {
+
         return properties.getProperty("password");
+    }
+
+    public static String baseUri(){
+        return properties.getProperty("base_uri");
+    }
+    public static String path(){
+        return properties.getProperty("path");
     }
 }

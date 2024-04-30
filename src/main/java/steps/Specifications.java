@@ -29,7 +29,7 @@ public class Specifications {
 
         return new RequestSpecBuilder()
                 .setContentType(ContentType.JSON)
-                .setBaseUri("http://localhost:8080")
+                .setBaseUri(baseUri())
                 .addHeader("Authorization", "Bearer " + getJwt())
                 .addFilter(new RequestLoggingFilter())
                 .addFilter(new ResponseLoggingFilter())
@@ -40,8 +40,7 @@ public class Specifications {
 
         return new RequestSpecBuilder()
                 .setContentType(ContentType.XML)
-                .setBaseUri("http://localhost")
-                .setPort(8080)
+                .setBaseUri(baseUri())
                 .addHeader("Authorization", "Bearer " + getJwt())
                 .addFilter(new RequestLoggingFilter())
                 .addFilter(new ResponseLoggingFilter())
@@ -61,7 +60,7 @@ public class Specifications {
                 .contentType(ContentType.JSON)
                 .body(jwt)
                 .when()
-                .get("http://localhost:8080/auth/login")
+                .get(path())
                 .then().log().all()
                 .extract()
                 .jsonPath()
