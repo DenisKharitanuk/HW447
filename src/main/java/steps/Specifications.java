@@ -6,7 +6,6 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
-import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import models.negative_responses.NegativeResponses;
@@ -15,12 +14,14 @@ import models.positive_responses.GetAllAuthorsBooksPositiveResponseXML;
 import models.positive_responses.SaveNewAuthorPositiveResponse;
 import models.positive_responses.SaveNewBooksPositiveResponse;
 import models.requests.GetAllAuthorsBooksRequestXML;
+import models.requests.JwtModel;
 import models.requests.SaveNewAuthorRequest;
 import models.requests.SaveNewBooksRequest;
 
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static steps.ReadProperties.*;
 
 public class Specifications {
 
@@ -28,8 +29,8 @@ public class Specifications {
 
         return new RequestSpecBuilder()
                 .setContentType(ContentType.JSON)
-                .setBaseUri("http://localhost")
-                .setPort(8080)
+                .setBaseUri("http://localhost:8080")
+                .addHeader("Authorization", "Bearer " + getJwt())
                 .addFilter(new RequestLoggingFilter())
                 .addFilter(new ResponseLoggingFilter())
                 .build();
@@ -41,6 +42,7 @@ public class Specifications {
                 .setContentType(ContentType.XML)
                 .setBaseUri("http://localhost")
                 .setPort(8080)
+                .addHeader("Authorization", "Bearer " + getJwt())
                 .addFilter(new RequestLoggingFilter())
                 .addFilter(new ResponseLoggingFilter())
                 .build();
@@ -52,6 +54,19 @@ public class Specifications {
                 .build();
     }
 
+    public static String getJwt() {
+        JwtModel jwt= new JwtModel(login(), password());
+
+        return given()
+                .contentType(ContentType.JSON)
+                .body(jwt)
+                .when()
+                .get("http://localhost:8080/auth/login")
+                .then().log().all()
+                .extract()
+                .jsonPath()
+                .getString("jwtToken");
+    }
 
     public static SaveNewAuthorPositiveResponse requestSpecSaveNewAuthor(String firstName, String familyName, String secondName, int statusCode) {
         SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName);
