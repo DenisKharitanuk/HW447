@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DateGenerator {
-
-
     public static String dateGenerator() {
         Date startDate= new Date(1500);
         Date endDate= new Date();

@@ -1,22 +1,26 @@
 package steps.asertsResponses;
 
-import entity.Book;
-import io.restassured.response.ValidatableResponse;
 import models.positive_responses.GetAllAuthorsBooksPositiveResponse;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.TimeZone;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 public class GetAllBookAssert {
-    public static void verifyBodyGetBook(List<GetAllAuthorsBooksPositiveResponse> allBooks, long id, String bookTitle) {
-        Optional<GetAllAuthorsBooksPositiveResponse> firstResponseOptional = allBooks.stream().findFirst();
-        GetAllAuthorsBooksPositiveResponse firstResponse = firstResponseOptional.get();
-        assertEquals(firstResponse.getBookTitle(), bookTitle);
-        assertEquals(firstResponse.getAuthor().getId(), id);
+    public static void verifyBodyGetBook(List<GetAllAuthorsBooksPositiveResponse> allBooks, long id, String bookTitle, int bookIndex, Date updated) {
+
+        assertEquals(allBooks.get(bookIndex).getBookTitle(), bookTitle);
+        assertEquals(allBooks.get(bookIndex).getAuthor().getId(), id);
+        Date date = allBooks.get(bookIndex).getUpdated();
+
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        assertEquals(format.format(updated), format.format(date));
     }
 
     public static void verifyBodyGetBooks(List<GetAllAuthorsBooksPositiveResponse> allBooks, long id, List<String> bookTitles) {
