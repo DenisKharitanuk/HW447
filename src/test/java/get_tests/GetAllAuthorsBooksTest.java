@@ -34,19 +34,16 @@ public class GetAllAuthorsBooksTest {
     @Description("Список всех книг автора в соответствии с id автора ,список состоит из 1 книги , статус код 201")
     @Test
     public void getAllAuthorsBookTest() {
-
         SaveNewAuthorPositiveResponse author = requestSpecSaveNewAuthor(randomAlphabetic(5),
                 randomAlphabetic(5), randomAlphabetic(5), 201, dateGenerator());
         long id = author.getAuthorId();
 
         String bookTitle = randomAlphabetic(5);
         requestSpecSaveNewBook(bookTitle, id, 201);
-
+        Date updated = new Date();
         List<GetAllAuthorsBooksPositiveResponse> allBooks = requestSpecGetAllBooksJSON(String.valueOf(id), 200);
 
-        Date updated= new Date();
-
-        verifyBodyGetBook(allBooks, id, bookTitle, 0, updated );
+        verifyBodyGetBook(allBooks, id, bookTitle, 0, updated);
     }
 
     @DisplayName("Получить все книги автора")
@@ -77,7 +74,6 @@ public class GetAllAuthorsBooksTest {
         bookTitlesList.add(bookTitle2);
         String bookTitle3 = randomAlphabetic(5);
         bookTitlesList.add(bookTitle3);
-
         requestSpecSaveNewBook(bookTitle, id, 201);
         requestSpecSaveNewBook(bookTitle2, id, 201);
         requestSpecSaveNewBook(bookTitle3, id, 201);
