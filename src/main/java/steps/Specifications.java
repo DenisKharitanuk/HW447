@@ -70,7 +70,6 @@ public class Specifications {
     }
 
     public static SaveNewAuthorPositiveResponse requestSpecSaveNewAuthor(String firstName, String familyName, String secondName, int statusCode, String birthDate) {
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName, birthDate);
 
         return given()
@@ -83,19 +82,18 @@ public class Specifications {
                 .extract().as(SaveNewAuthorPositiveResponse.class);
     }
 
-//    public static NegativeResponses requestSpecSaveNewAuthorNegative(String firstName, String familyName, String secondName, int statusCode, Date birthDate) {
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//        SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName, birthDate);
-//
-//        return given()
-//                .spec(requestSpecJSON())
-//                .body(author)
-//                .when()
-//                .post(Endpoints.SAVE_NEW_AUTHORS_URL)
-//                .then()
-//                .spec(responseSpec(statusCode))
-//                .extract().as(NegativeResponses.class);
-//    }
+    public static NegativeResponses requestSpecSaveNewAuthorNegative(String firstName, String familyName, String secondName, int statusCode, String birthDate) {
+        SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName, birthDate);
+
+        return given()
+                .spec(requestSpecJSON())
+                .body(author)
+                .when()
+                .post(Endpoints.SAVE_NEW_AUTHORS_URL)
+                .then()
+                .spec(responseSpec(statusCode))
+                .extract().as(NegativeResponses.class);
+    }
 
     public static SaveNewBooksPositiveResponse requestSpecSaveNewBook(String bookTitle, long authorId, int statusCode) {
         Author author = new Author(authorId);
@@ -111,6 +109,7 @@ public class Specifications {
     }
 
     public static NegativeResponses requestSpecSaveNewBookNegative(String bookTitle, long authorID, int statusCode) {
+
         Author author = new Author(authorID);
         SaveNewBooksRequest book = new SaveNewBooksRequest(bookTitle, author);
 
@@ -149,16 +148,14 @@ public class Specifications {
                 .get(Endpoints.GET_ALL_BOOKS_URL, id)
                 .then().spec(responseSpec(statusCode))
                 .extract().as(NegativeResponses.class);
-
     }
 
-    public static NegativeResponses requestSpecGetAllBookNegativeNull(int statusCode) {
+    public static NegativeResponses requestSpecGetAllBookNegativeIdNull(int statusCode) {
         return given().spec(requestSpecJSON())
                 .when()
                 .get("/library/authors/" + null + "/books")
                 .then().spec(responseSpec(statusCode))
                 .extract().as(NegativeResponses.class);
-
     }
 
     public static NegativeResponses requestSpecGetAllBooksXMLNegative(long id, int statusCode) {

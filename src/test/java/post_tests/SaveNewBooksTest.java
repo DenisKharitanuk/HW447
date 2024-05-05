@@ -22,8 +22,8 @@ import static steps.DateGenerator.dateGenerator;
 @Story("saveNewBook")
 public class SaveNewBooksTest {
 
-    @DisplayName("New book save")
-    @Description("The book is saved, status code 201, the response returns the id of the saved book")
+    @DisplayName("Сохранение книги ")
+    @Description("Книга сохранена , ответ содержит id сохраненной  книги , статус код 201")
     @Test
     public void saveBookTest() {
         SaveNewAuthorPositiveResponse author = requestSpecSaveNewAuthor(randomAlphabetic(5),
@@ -36,16 +36,16 @@ public class SaveNewBooksTest {
     }
 
 
-    @DisplayName("Saving a new book with an unknown author id")
-    @Description("The book is not saved, status code 409, error 1004")
+    @DisplayName("Сохранение книги с неизвестным id автора")
+    @Description("Книга не сохранена , статус код 409, ошибка 1004")
     @Test
     public void saveBookUnknownAuthorTest() {
         NegativeResponses response = requestSpecSaveNewBookNegative(randomAlphabetic(5), 666, 409);
         verifyBodyNegative(response, "1004", "Указанный автор не существует в таблице");
     }
 
-    @DisplayName("Saving a new book with a negative id")
-    @Description("The book is not saved, status code 409, error 1004")
+    @DisplayName("Сохранение книги с отрицательным id автора")
+    @Description("Книга не сохранена , статус код 409, ошибка 1004")
     @ParameterizedTest(name = "id = {0}")
     @ValueSource(longs = {-1, -2,})
     public void saveBookNegativeId(long id) {
@@ -53,8 +53,8 @@ public class SaveNewBooksTest {
         verifyBodyNegative(response, "1004", "Указанный автор не существует в таблице");
     }
 
-    @DisplayName("Saving a new book with an empty bookTitle")
-    @Description("The book is not saved, status code 400, error 1001")
+    @DisplayName("Сохранение книги с пустым полем bookTitle")
+    @Description("Книга не сохранена , статус код 400, ошибка 1001")
     @ParameterizedTest
     @NullSource
     public void saveBookNullTitle(String bookTitle) {

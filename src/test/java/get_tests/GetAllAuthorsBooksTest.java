@@ -3,26 +3,23 @@ package get_tests;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Story;
-import io.restassured.response.ValidatableResponse;
+
 import models.negative_responses.NegativeResponses;
 import models.positive_responses.GetAllAuthorsBooksPositiveResponse;
 import models.positive_responses.SaveNewAuthorPositiveResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import steps.DateGenerator;
-import steps.Specifications;
-import steps.asertsResponses.GetAllBookAssert;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static steps.DateGenerator.dateGenerator;
 import static steps.Specifications.*;
-import static steps.asertsResponses.GetAllBookAssert.verifyBodyGetBook;
-import static steps.asertsResponses.GetAllBookAssert.verifyBodyGetBooks;
+import static steps.asertsResponses.GetAllBookAssert.*;
 import static steps.asertsResponses.NegativeAsser.verifyBodyNegative;
 
 @Story("Get all books")
@@ -31,8 +28,7 @@ public class GetAllAuthorsBooksTest {
 
     @DisplayName("Получить все книги автора")
     @Description("Список всех книг автора в соответствии с id автора ,список состоит из 1 созданой книги , статус код 201")
-    @ParameterizedTest(name = "id = {0}")
-    @ValueSource(longs = {10})
+    @Test
     public void getAllAuthorsBookTest() {
 
         SaveNewAuthorPositiveResponse author = requestSpecSaveNewAuthor(randomAlphabetic(5),
@@ -46,23 +42,39 @@ public class GetAllAuthorsBooksTest {
     }
 
     @DisplayName("Получить все книги автора")
+    @Description("Список книг - пуст, статус код 201")
+    @Test
+    public void getAllAuthorsBooksListIsEmptyTest() {
+
+        SaveNewAuthorPositiveResponse author = requestSpecSaveNewAuthor(randomAlphabetic(5),
+                randomAlphabetic(5), randomAlphabetic(5), 201, dateGenerator());
+        long id = author.getAuthorId();
+        requestSpecGetAllBooksJSON(String.valueOf(id), 200);
+        List<GetAllAuthorsBooksPositiveResponse> allBooks = requestSpecGetAllBooksJSON(String.valueOf(id), 200);
+        verifyBodyGetEmptyBookList(allBooks);
+    }
+
+    @DisplayName("Получить все книги автора")
     @Description("Список всех книг автора в соответствии с id автора ,список состоит из множества книг, статус код 201")
-    @ParameterizedTest(name = "id = {0}")
-    @ValueSource(longs = {10})
+    @Test
     public void getAllAuthorsBooksTest() {
 
         SaveNewAuthorPositiveResponse author = requestSpecSaveNewAuthor(randomAlphabetic(5),
                 randomAlphabetic(5), randomAlphabetic(5), 201, dateGenerator());
         long id = author.getAuthorId();
+        List<String> bookTitlesList = new ArrayList<>();
         String bookTitle = randomAlphabetic(5);
+        bookTitlesList.add(bookTitle);
         String bookTitle2 = randomAlphabetic(5);
+        bookTitlesList.add(bookTitle2);
         String bookTitle3 = randomAlphabetic(5);
+        bookTitlesList.add(bookTitle3);
+
         requestSpecSaveNewBook(bookTitle, id, 201);
         requestSpecSaveNewBook(bookTitle2, id, 201);
         requestSpecSaveNewBook(bookTitle3, id, 201);
-
         List<GetAllAuthorsBooksPositiveResponse> allBooks = requestSpecGetAllBooksJSON(String.valueOf(id), 200);
-        verifyBodyGetBooks(allBooks, id, bookTitle);
+        verifyBodyGetBooks(allBooks, id, bookTitlesList);
     }
 
     @DisplayName("Get a list of books by an unknown author")
@@ -96,7 +108,7 @@ public class GetAllAuthorsBooksTest {
     @Description("Book list is not exist, status code 400")
     @Test
     public void getAllBooksIdNullTest() {
-        NegativeResponses response = requestSpecGetAllBookNegativeNull(400);
+        NegativeResponses response = requestSpecGetAllBookNegativeIdNull(400);
         verifyBodyNegative(response, "1001", "Некорректный обязательный параметр");
     }
 }
