@@ -37,7 +37,6 @@ public class GetAllAuthorsBooksTest {
         SaveNewAuthorPositiveResponse author = requestSpecSaveNewAuthor(randomAlphabetic(5),
                 randomAlphabetic(5), randomAlphabetic(5), 201, dateGenerator());
         long id = author.getAuthorId();
-
         String bookTitle = randomAlphabetic(5);
         requestSpecSaveNewBook(bookTitle, id, 201);
         Date updated = new Date();
