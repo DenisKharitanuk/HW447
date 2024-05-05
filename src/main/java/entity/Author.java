@@ -10,12 +10,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "author")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@EqualsAndHashCode
 @NoArgsConstructor(force = true)
 public class Author {
 
@@ -35,7 +36,11 @@ public class Author {
     @JsonProperty("secondName")
     private String secondName;
 
+    @XmlElement(name = "birth_date", required = false)
+    @JsonProperty("birthDate")
+    private String birthDate;
+
     public Author(long authorID) {
-        this.id=authorID;
+        this.id = authorID;
     }
 }

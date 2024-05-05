@@ -18,6 +18,8 @@ import models.requests.JwtModel;
 import models.requests.SaveNewAuthorRequest;
 import models.requests.SaveNewBooksRequest;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -54,7 +56,7 @@ public class Specifications {
     }
 
     public static String getJwt() {
-        JwtModel jwt= new JwtModel(login(), password());
+        JwtModel jwt = new JwtModel(login(), password());
 
         return given()
                 .contentType(ContentType.JSON)
@@ -67,8 +69,10 @@ public class Specifications {
                 .getString("jwtToken");
     }
 
-    public static SaveNewAuthorPositiveResponse requestSpecSaveNewAuthor(String firstName, String familyName, String secondName, int statusCode) {
-        SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName);
+    public static SaveNewAuthorPositiveResponse requestSpecSaveNewAuthor(String firstName, String familyName, String secondName, int statusCode, String birthDate) {
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName, birthDate);
+
         return given()
                 .spec(requestSpecJSON())
                 .body(author)
@@ -79,17 +83,19 @@ public class Specifications {
                 .extract().as(SaveNewAuthorPositiveResponse.class);
     }
 
-    public static NegativeResponses requestSpecSaveNewAuthorNegative(String firstName, String familyName, String secondName, int statusCode) {
-        SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName);
-        return given()
-                .spec(requestSpecJSON())
-                .body(author)
-                .when()
-                .post(Endpoints.SAVE_NEW_AUTHORS_URL)
-                .then()
-                .spec(responseSpec(statusCode))
-                .extract().as(NegativeResponses.class);
-    }
+//    public static NegativeResponses requestSpecSaveNewAuthorNegative(String firstName, String familyName, String secondName, int statusCode, Date birthDate) {
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//        SaveNewAuthorRequest author = new SaveNewAuthorRequest(firstName, familyName, secondName, birthDate);
+//
+//        return given()
+//                .spec(requestSpecJSON())
+//                .body(author)
+//                .when()
+//                .post(Endpoints.SAVE_NEW_AUTHORS_URL)
+//                .then()
+//                .spec(responseSpec(statusCode))
+//                .extract().as(NegativeResponses.class);
+//    }
 
     public static SaveNewBooksPositiveResponse requestSpecSaveNewBook(String bookTitle, long authorId, int statusCode) {
         Author author = new Author(authorId);
@@ -129,18 +135,18 @@ public class Specifications {
                 .extract().as(GetAllAuthorsBooksPositiveResponseXML.class);
     }
 
-public static List<GetAllAuthorsBooksPositiveResponse> requestSpecGetAllBooksJSON(String id, int statusCode) {
-    return given().spec(requestSpecJSON())
-            .when()
-            .get(Endpoints.GET_ALL_BOOKS_URL, id)
-            .then().spec(responseSpec(statusCode))
-            .extract().jsonPath().getList(".", GetAllAuthorsBooksPositiveResponse.class);
-}
+    public static List<GetAllAuthorsBooksPositiveResponse> requestSpecGetAllBooksJSON(String id, int statusCode) {
+        return given().spec(requestSpecJSON())
+                .when()
+                .get(Endpoints.GET_ALL_BOOKS_URL, id)
+                .then().spec(responseSpec(statusCode))
+                .extract().jsonPath().getList(".", GetAllAuthorsBooksPositiveResponse.class);
+    }
 
     public static NegativeResponses requestSpecGetAllBookNegative(String id, int statusCode) {
         return given().spec(requestSpecJSON())
                 .when()
-                .get(Endpoints.GET_ALL_BOOKS_URL,id)
+                .get(Endpoints.GET_ALL_BOOKS_URL, id)
                 .then().spec(responseSpec(statusCode))
                 .extract().as(NegativeResponses.class);
 
@@ -149,7 +155,7 @@ public static List<GetAllAuthorsBooksPositiveResponse> requestSpecGetAllBooksJSO
     public static NegativeResponses requestSpecGetAllBookNegativeNull(int statusCode) {
         return given().spec(requestSpecJSON())
                 .when()
-                .get("/library/authors/"+null+"/books")
+                .get("/library/authors/" + null + "/books")
                 .then().spec(responseSpec(statusCode))
                 .extract().as(NegativeResponses.class);
 
